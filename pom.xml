@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.zaychik.learning</groupId>
-	<artifactId>system_client_rest</artifactId>
+	<artifactId>system_user_rest</artifactId>
 	<version>0.0.1</version>
 	<name>system_client_rest</name>
 	<description>rest full system client</description>

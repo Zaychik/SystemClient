@@ -1,51 +1,40 @@
 package com.zaychik.learning.system_user_rest.service;
 
 import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
+@Primary
 public class UserServiceImpl implements UserService {
-
-    private static final Map<Integer, User> USER_REPOSITORY_MAP = new HashMap<>();
-
-    private static final AtomicInteger USER_ID_HOLDER = new AtomicInteger();
-
+    @Autowired
+    private UserRepository userRepository;
     @Override
     public void create(User user) {
-        final int userId = USER_ID_HOLDER.incrementAndGet();
-        user.setId(userId);
-        USER_REPOSITORY_MAP.put(userId, user);
+        userRepository.create(user);
     }
 
     @Override
     public List<User> readAll() {
-        return new ArrayList<>(USER_REPOSITORY_MAP.values());
+        return userRepository.findAll();
     }
 
     @Override
     public User read(int id) {
-        return USER_REPOSITORY_MAP.get(id);
+        return userRepository.findById(id);
     }
 
     @Override
     public boolean update(User user, int id) {
-        if (USER_REPOSITORY_MAP.containsKey(id)) {
-            user.setId(id);
-            USER_REPOSITORY_MAP.put(id, user);
-            return true;
-        }
-
         return false;
     }
 
     @Override
     public boolean delete(int id) {
-        return USER_REPOSITORY_MAP.remove(id) != null;
+        return userRepository.delete(id);
     }
 }

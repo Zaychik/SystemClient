@@ -19,6 +19,7 @@ public class SystemUserRestApplication {
 	public static void main(String[] args) {
 		var dataSource = new DriverManagerDataSource(URL, USER, PASSWORD);
 		flywayMigrations(dataSource);
+
 		SpringApplication.run(SystemUserRestApplication.class, args);
 
 	}

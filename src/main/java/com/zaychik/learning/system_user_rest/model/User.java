@@ -1,7 +1,13 @@
 package com.zaychik.learning.system_user_rest.model;
 
-public class User {
+import jakarta.persistence.*;
 
+
+@Entity
+@Table(name = "tuser")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String email;

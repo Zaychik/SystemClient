@@ -18,12 +18,13 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
+/*
     @PostMapping(value = "/users")
     public ResponseEntity<?> create(@RequestBody User client) {
         userService.create(client);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+    */
 
     @GetMapping(value = "/users")
     public ResponseEntity<List<User>> read() {

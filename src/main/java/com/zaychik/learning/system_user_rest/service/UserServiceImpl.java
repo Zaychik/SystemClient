@@ -13,10 +13,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
-    @Override
-    public void create(User user) {
-        userRepository.create(user);
-    }
+
 
     @Override
     public List<User> readAll() {
@@ -25,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User read(int id) {
-        return userRepository.findById(id);
+        return userRepository.getById(id);
     }
 
     @Override
@@ -35,6 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean delete(int id) {
-        return userRepository.delete(id);
+        userRepository.deleteById(id);
+        return true;
     }
 }

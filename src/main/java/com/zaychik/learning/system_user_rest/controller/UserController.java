@@ -5,6 +5,7 @@ import com.zaychik.learning.system_user_rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class UserController {
     */
 
     @GetMapping(value = "/users")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<User>> read() {
         final List<User> users = userService.readAll();
 
@@ -36,6 +38,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/users/{id}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<User> read(@PathVariable(name = "id") int id) {
         final User client = userService.read(id);
 

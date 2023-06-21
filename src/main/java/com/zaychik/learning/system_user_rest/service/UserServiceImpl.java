@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Primary
@@ -22,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User read(int id) {
-        return userRepository.getById(id);
+        return userRepository.findById(id).get();
     }
 
     @Override

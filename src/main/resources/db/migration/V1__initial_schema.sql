@@ -1,9 +1,9 @@
-create table tUser
-(
-     id       int           not null primary key
-    ,name     varchar(50)   not null
-    ,password varchar(500)      null
-    ,email    varchar(100)      null
-    ,phone    varchar(50)       null
-);
-
+create table tuser (
+     id         serial        not null
+    ,email      varchar(255)
+    ,name       varchar(255)
+    ,password   varchar(255)
+    ,phone      varchar(255)
+    ,role       varchar(255)             check (role in ('User','ADMIN'))
+    ,primary key (id)
+    );

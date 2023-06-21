@@ -28,7 +28,7 @@ public class UserController {
     */
 
     @GetMapping(value = "/users")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<User>> read() {
         final List<User> users = userService.readAll();
 
@@ -38,18 +38,19 @@ public class UserController {
     }
 
     @GetMapping(value = "/users/{id}")
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<User> read(@PathVariable(name = "id") int id) {
-        final User client = userService.read(id);
+        final User user = userService.read(id);
 
-        return client != null
-                ? new ResponseEntity<>(client, HttpStatus.OK)
+        return user != null
+                ? new ResponseEntity<>(user, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping(value = "/users/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody User user) {
-        final boolean updated = userService.update(user, id);
+        User client = userService.read(id);
+        final boolean updated = userService.saveUser(user);
 
         return updated
                 ? new ResponseEntity<>(HttpStatus.OK)

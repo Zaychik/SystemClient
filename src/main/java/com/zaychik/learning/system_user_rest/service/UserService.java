@@ -10,7 +10,7 @@ public interface UserService {
 
     User read(int id);
 
-    boolean update(User user, int id);
+    boolean saveUser(User user);
 
     boolean delete(int id);
 }

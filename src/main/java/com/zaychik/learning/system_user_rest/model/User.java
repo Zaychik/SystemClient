@@ -25,6 +25,7 @@ public class User implements UserDetails {
     private String email;
     private String phone;
     private String password;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -97,5 +98,13 @@ public class User implements UserDetails {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

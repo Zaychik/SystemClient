@@ -1,16 +1,21 @@
 package com.zaychik.learning.system_user_rest.service;
 
-import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.entity.User;
+import com.zaychik.learning.system_user_rest.entity.UserDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
-    List<User> readAll();
+    List<UserDto> readAll();
 
-    User read(int id);
+    UserDto read(int id);
 
-    boolean saveUser(User user);
+    User saveUser(User user);
 
-    boolean delete(int id);
+
+    void delete(int id);
+
+    User create(User user);
+
+    User update(User user);
 }

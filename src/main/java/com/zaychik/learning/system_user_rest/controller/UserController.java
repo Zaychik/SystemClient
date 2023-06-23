@@ -1,6 +1,7 @@
 package com.zaychik.learning.system_user_rest.controller;
 
-import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.entity.User;
+import com.zaychik.learning.system_user_rest.entity.UserDto;
 import com.zaychik.learning.system_user_rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,57 +13,36 @@ import java.util.List;
 
 @RestController
 public class UserController {
-
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-/*
-    @PostMapping(value = "/users")
-    public ResponseEntity<?> create(@RequestBody User client) {
-        userService.create(client);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-    */
+    private UserService userService;
 
-    @GetMapping(value = "/users")
+    @PostMapping("/users")
+    public User create(@RequestBody User user) {
+        return userService.create(user);
+    }
+
+
+    @GetMapping("/users")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<User>> read() {
-        final List<User> users = userService.readAll();
-
-        return users != null &&  !users.isEmpty()
-                ? new ResponseEntity<>(users, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public List<UserDto> read() {
+        return userService.readAll();
     }
 
-    @GetMapping(value = "/users/{id}")
-    public ResponseEntity<User> read(@PathVariable(name = "id") int id) {
-        final User user = userService.read(id);
-
-        return user != null
-                ? new ResponseEntity<>(user, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping("/users/{id}")
+    public UserDto read(@PathVariable(name = "id") int id) {
+        return userService.read(id);
     }
 
-    @PutMapping(value = "/users/{id}")
+    @PutMapping("/users/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody User user) {
-        User client = userService.read(id);
-        final boolean updated = userService.saveUser(user);
-
-        return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    public void update(@PathVariable(name = "id") int id, @RequestBody User user) {
+        user.setId(id);
+        userService.update(user);
     }
 
-    @DeleteMapping(value = "/users/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") int id) {
-        final boolean deleted = userService.delete(id);
-
-        return deleted
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public void delete(@PathVariable(name = "id") int id) {
+        userService.delete(id);
     }
 }

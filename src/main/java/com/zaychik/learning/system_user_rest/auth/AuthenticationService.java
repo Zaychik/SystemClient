@@ -1,8 +1,8 @@
 package com.zaychik.learning.system_user_rest.auth;
 
 import com.zaychik.learning.system_user_rest.config.JwtService;
-import com.zaychik.learning.system_user_rest.model.Role;
-import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.entity.Role;
+import com.zaychik.learning.system_user_rest.entity.User;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +23,7 @@ public class AuthenticationService {
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode((request.getPassword())))
-                .role(Role.User)
+                .role(Role.USER)
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);

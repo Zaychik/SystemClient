@@ -1,4 +1,4 @@
-package com.zaychik.learning.system_user_rest.model;
+package com.zaychik.learning.system_user_rest.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,11 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "tuser")
+@Table(name = "tuser",
+        uniqueConstraints =
+        {
+                @UniqueConstraint(name = "tuser_contraint_email", columnNames = "email")
+        })
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -22,6 +26,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+
     private String email;
     private String phone;
     private String password;
@@ -68,6 +73,14 @@ public class User implements UserDetails {
 
 
 
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -76,35 +89,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPhone() {
         return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public Role getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

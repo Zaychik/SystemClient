@@ -6,8 +6,8 @@ import com.arangodb.springframework.config.ArangoConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-@Configuration
-@EnableArangoRepositories(basePackages = {"com.zaychik.learning.system_user_rest.repository"})
+//@Configuration
+//@EnableArangoRepositories(basePackages = {"com.zaychik.learning.system_user_rest.repository"})
 public class ArangoDbConfiguration implements ArangoConfiguration   {
 
 

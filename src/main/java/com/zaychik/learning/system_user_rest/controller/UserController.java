@@ -1,5 +1,7 @@
 package com.zaychik.learning.system_user_rest.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaychik.learning.system_user_rest.entity.LogElement;
 import com.zaychik.learning.system_user_rest.entity.User;
 import com.zaychik.learning.system_user_rest.entity.UserDto;
@@ -19,15 +21,18 @@ public class UserController {
     private UserService userService;
     @Autowired
     private LogElementService logElementService;
+    @Autowired
+    ObjectMapper objectMapper;
     @PostMapping("/users")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public User create(@AuthenticationPrincipal User userAuth, @RequestBody User user) {
+    public User create(@AuthenticationPrincipal User userAuth, @RequestBody User user) throws JsonProcessingException {
         logElementService.saveLogElement(
                 LogElement.builder().
                         userEmail(userAuth.getEmail()).
                         url("/users").
                         method("post").
                         dtEvent(new Date()).
+                        body(objectMapper.writeValueAsString(user)).
                         build()
         );
         return userService.create(user);
@@ -64,12 +69,13 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void update(@AuthenticationPrincipal User userAuth, @PathVariable(name = "id") int id, @RequestBody User user) {
+    public void update(@AuthenticationPrincipal User userAuth, @PathVariable(name = "id") int id, @RequestBody User user) throws JsonProcessingException {
         logElementService.saveLogElement(
                 LogElement.builder().
                         userEmail(userAuth.getEmail()).
                         url("/users/" + id).
                         method("put").
+                        body(objectMapper.writeValueAsString(user)).
                         dtEvent(new Date()).
                         build()
         );

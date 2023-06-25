@@ -1,1 +1,1 @@
-docker run --rm -e ARANGO_RANDOM_ROOT_PASSWORD=pwd -e ARANGO_RANDOM_ROOT_USER=usr -p 8528:8529 -d --name ar-log arangodb
+docker run --rm -e ARANGO_ROOT_PASSWORD=pwd -p 8528:8529 -d --name ar-log arangodb

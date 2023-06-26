@@ -29,19 +29,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(value = "users_cache", key = "#root.methodName")
+    @Cacheable(value = "users_cache")
     public UserDto read(int id) {
         return mappingUtils.mapToProductDto(userRepository.findById(id).get());
     }
 
     @Override
-    @CachePut("users")
+    @CachePut("users_cache")
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
     @Override
-    @CacheEvict("users")
+    @CacheEvict("users_cache")
     public void delete(int id) {
         if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("Пользователя с таким номером не существует");

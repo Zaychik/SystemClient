@@ -5,6 +5,8 @@ import com.zaychik.learning.system_user_rest.entity.UserDto;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import com.zaychik.learning.system_user_rest.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Primary
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
@@ -28,17 +29,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable
+    @Cacheable(value = "users_cache", key = "#root.methodName")
     public UserDto read(int id) {
         return mappingUtils.mapToProductDto(userRepository.findById(id).get());
     }
 
     @Override
+    @CachePut("users")
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
     @Override
+    @CacheEvict("users")
     public void delete(int id) {
         if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("Пользователя с таким номером не существует");

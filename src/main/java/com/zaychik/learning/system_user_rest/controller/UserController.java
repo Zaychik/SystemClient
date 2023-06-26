@@ -8,6 +8,7 @@ import com.zaychik.learning.system_user_rest.entity.UserDto;
 import com.zaychik.learning.system_user_rest.service.LogElementService;
 import com.zaychik.learning.system_user_rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class UserController {
     private LogElementService logElementService;
     @Autowired
     ObjectMapper objectMapper;
+
     @PostMapping("/users")
     @PreAuthorize("hasAuthority('ADMIN')")
     public User create(@AuthenticationPrincipal User userAuth, @RequestBody User user) throws JsonProcessingException {

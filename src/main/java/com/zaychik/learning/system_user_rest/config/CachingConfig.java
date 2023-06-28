@@ -15,8 +15,7 @@ public class CachingConfig {
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        JedisConnectionFactory jedisConFactory
-                = new JedisConnectionFactory();
+        JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
         jedisConFactory.setHostName("localhost");
         jedisConFactory.setPort(8001);
         return jedisConFactory;

@@ -17,15 +17,21 @@ public class MigrationsExecutorFlyway {
     private String userName;
     @Value("${spring.datasource.password}")
     private String password;
+    @Value("${migration.run}")
+    private Boolean isExecMigration;
+
+
 
     @PostConstruct
     public void executeMigrations() {
-        log.info("db migration started...");
-        Flyway.configure()
-                .dataSource(url, userName, password)
-                .locations("classpath:/db/migration")
-                .load()
-                .migrate();
-        log.info("db migration finished.");
+        if (isExecMigration) {
+            log.info("db migration started...");
+            Flyway.configure()
+                    .dataSource(url, userName, password)
+                    .locations("classpath:/db/migration")
+                    .load()
+                    .migrate();
+            log.info("db migration finished.");
+        }
     }
 }

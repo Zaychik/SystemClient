@@ -2,23 +2,28 @@ package com.zaychik.learning.system_user_rest.service;
 
 import com.zaychik.learning.system_user_rest.entity.LogElement;
 import com.zaychik.learning.system_user_rest.entity.User;
-import com.zaychik.learning.system_user_rest.entity.UserDto;
 import com.zaychik.learning.system_user_rest.repository.LogElementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class LogElementService {
     @Autowired
     private LogElementRepository logElementRepository;
 
-    public LogElement saveLogElement(LogElement logElement) {
-        return logElementRepository.save(logElement);
+    public LogElement logPush(User userAuth, HttpServletRequest request) {
+        return logElementRepository.save(
+                LogElement.builder().
+                        userEmail(userAuth.getEmail()).
+                        url(String.valueOf(request.getRequestURL())).
+                        method(request.getMethod()).
+                        dtEvent(LocalDateTime.now()).
+                        build()
+        );
     }
 
     public List<LogElement> readAll() {

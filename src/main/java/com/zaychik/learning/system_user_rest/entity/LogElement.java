@@ -9,22 +9,23 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Id;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Document("tLogEntity")
+@Document("LogEntity")
 public class LogElement {
+
     @Id
     private String id;
-
     @ArangoId
     private String arangoId;
     private String userEmail;
     private String url;
     private String method;
-    private String body;
-    private Date dtEvent;
+    private LocalDateTime dtEvent;
 }

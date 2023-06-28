@@ -1,4 +1,4 @@
-create table tuser (
+create table users (
      id         serial        not null
     ,email      varchar(255)
     ,name       varchar(255)
@@ -6,5 +6,5 @@ create table tuser (
     ,phone      varchar(255)
     ,role       varchar(255)             check (role in ('USER','ADMIN'))
     ,primary key (id)
-    ,constraint tuser_contraint_email unique (email)
+    ,constraint users_contraint_email unique (email)
     );

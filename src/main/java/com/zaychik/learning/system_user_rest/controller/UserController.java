@@ -1,6 +1,5 @@
 package com.zaychik.learning.system_user_rest.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaychik.learning.system_user_rest.entity.LogElement;
 import com.zaychik.learning.system_user_rest.entity.User;
@@ -8,15 +7,15 @@ import com.zaychik.learning.system_user_rest.entity.UserDto;
 import com.zaychik.learning.system_user_rest.service.LogElementService;
 import com.zaychik.learning.system_user_rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
+@RequestMapping("users")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -25,84 +24,54 @@ public class UserController {
     @Autowired
     ObjectMapper objectMapper;
 
-    @PostMapping("/users")
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public User create(@AuthenticationPrincipal User userAuth, @RequestBody User user) throws JsonProcessingException {
-        logElementService.saveLogElement(
-                LogElement.builder().
-                        userEmail(userAuth.getEmail()).
-                        url("/users").
-                        method("post").
-                        dtEvent(new Date()).
-                        body(objectMapper.writeValueAsString(user)).
-                        build()
-        );
+    public User create(@AuthenticationPrincipal User userAuth,
+                       @RequestBody User user,
+                       HttpServletRequest request) {
+        logElementService.logPush(userAuth, request);
         return userService.create(user);
     }
 
 
-    @GetMapping("/users")
+    @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public List<UserDto> read(@AuthenticationPrincipal User userAuth) {
-        logElementService.saveLogElement(
-                LogElement.builder().
-                        userEmail(userAuth.getEmail()).
-                        url("/users").
-                        method("get").
-                        dtEvent(new Date()).
-                        build()
-        );
-        return userService.readAll();
+    public List<UserDto> read(@AuthenticationPrincipal User userAuth,
+                              HttpServletRequest request) {
+        logElementService.logPush(userAuth, request);
+        return userService.getAll();
     }
 
-    @GetMapping("/users/{id}")
-    public UserDto read(@AuthenticationPrincipal User userAuth, @PathVariable(name = "id") int id) {
-        logElementService.saveLogElement(
-                LogElement.builder().
-                        userEmail(userAuth.getEmail()).
-                        url("/users/" + id).
-                        method("get").
-                        dtEvent(new Date()).
-                        build()
-        );
-
-        return userService.read(id);
+    @GetMapping("/{id}")
+    public UserDto read(@AuthenticationPrincipal User userAuth,
+                        @PathVariable int id,
+                        HttpServletRequest request) {
+        logElementService.logPush(userAuth, request);
+        return userService.get(id);
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void update(@AuthenticationPrincipal User userAuth, @PathVariable(name = "id") int id, @RequestBody User user) throws JsonProcessingException {
-        logElementService.saveLogElement(
-                LogElement.builder().
-                        userEmail(userAuth.getEmail()).
-                        url("/users/" + id).
-                        method("put").
-                        body(objectMapper.writeValueAsString(user)).
-                        dtEvent(new Date()).
-                        build()
-        );
-        user.setId(id);
-        userService.update(user);
+    public void update(@AuthenticationPrincipal User userAuth,
+                       @PathVariable int id,
+                       @RequestBody UserDto user,
+                       HttpServletRequest request) {
+        logElementService.logPush(userAuth, request);
+        userService.update(id, user);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void delete(@AuthenticationPrincipal User userAuth, @PathVariable(name = "id") int id) {
-        logElementService.saveLogElement(
-                LogElement.builder().
-                        userEmail(userAuth.getEmail()).
-                        url("/users/" + id).
-                        method("delete").
-                        dtEvent(new Date()).
-                        build()
-        );
+    public void delete(@AuthenticationPrincipal User userAuth,
+                       @PathVariable int id,
+                       HttpServletRequest request) {
+        logElementService.logPush(userAuth, request);
         userService.delete(id);
     }
 
-    @PostMapping("/users/log")
+    @PostMapping("/log")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public List<LogElement> readLog(@RequestBody User user) {
-
+    public List<LogElement> readLog(@RequestBody UserDto user) {
         return logElementService.readAllbyUserEmail(user.getEmail());
     }
 

@@ -3,7 +3,7 @@ package com.zaychik.learning.system_user_rest.service;
 import com.zaychik.learning.system_user_rest.entity.User;
 import com.zaychik.learning.system_user_rest.entity.UserDto;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
-import com.zaychik.learning.system_user_rest.utils.MappingUtils;
+import com.zaychik.learning.system_user_rest.service.utils.UserDtoUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -17,18 +17,17 @@ import java.util.stream.Collectors;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private MappingUtils mappingUtils;
+
 
     public List<UserDto> getAll() {
         return userRepository.findAll().stream()
-                .map(mappingUtils::mapToUserDto)
+                .map(UserDtoUserMapper.INSTANCE::mapToUserDto)
                 .collect(Collectors.toList());
     }
 
     @Cacheable(value = "users_cache")
     public UserDto get(int id) {
-        return mappingUtils.mapToUserDto(userRepository.findById(id).get());
+        return UserDtoUserMapper.INSTANCE.mapToUserDto(userRepository.findById(id).get());
     }
 
     @CachePut("users_cache")
@@ -49,7 +48,7 @@ public class UserService {
     public User update(int id, UserDto user) {
         CheckUserExistById(id);
         User userOld = userRepository.findById(id).get();
-        User userNew = mappingUtils.mapToUser(user);
+        User userNew = UserDtoUserMapper.INSTANCE.mapToUser(user);
         userNew.setPassword(userOld.getPassword());
         userNew.setId(userOld.getId());
         return saveUser(userNew);

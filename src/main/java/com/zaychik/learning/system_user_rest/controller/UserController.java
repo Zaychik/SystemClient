@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaychik.learning.system_user_rest.entity.LogElement;
 import com.zaychik.learning.system_user_rest.entity.User;
 import com.zaychik.learning.system_user_rest.entity.UserDto;
+import com.zaychik.learning.system_user_rest.entity.auth.UserAuth;
 import com.zaychik.learning.system_user_rest.service.LogElementService;
 import com.zaychik.learning.system_user_rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public User create(@AuthenticationPrincipal User userAuth,
+    public User create(@AuthenticationPrincipal UserAuth userAuth,
                        @RequestBody User user,
                        HttpServletRequest request) {
         logElementService.logPush(userAuth, request);
@@ -36,14 +37,14 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public List<UserDto> read(@AuthenticationPrincipal User userAuth,
+    public List<UserDto> read(@AuthenticationPrincipal UserAuth userAuth,
                               HttpServletRequest request) {
         logElementService.logPush(userAuth, request);
         return userService.getAll();
     }
 
     @GetMapping("/{id}")
-    public UserDto read(@AuthenticationPrincipal User userAuth,
+    public UserDto read(@AuthenticationPrincipal UserAuth userAuth,
                         @PathVariable int id,
                         HttpServletRequest request) {
         logElementService.logPush(userAuth, request);
@@ -52,7 +53,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void update(@AuthenticationPrincipal User userAuth,
+    public void update(@AuthenticationPrincipal UserAuth userAuth,
                        @PathVariable int id,
                        @RequestBody UserDto user,
                        HttpServletRequest request) {
@@ -62,7 +63,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void delete(@AuthenticationPrincipal User userAuth,
+    public void delete(@AuthenticationPrincipal UserAuth userAuth,
                        @PathVariable int id,
                        HttpServletRequest request) {
         logElementService.logPush(userAuth, request);

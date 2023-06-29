@@ -1,7 +1,7 @@
 package com.zaychik.learning.system_user_rest.service;
 
 import com.zaychik.learning.system_user_rest.entity.LogElement;
-import com.zaychik.learning.system_user_rest.entity.User;
+import com.zaychik.learning.system_user_rest.entity.auth.UserAuth;
 import com.zaychik.learning.system_user_rest.repository.LogElementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +15,10 @@ public class LogElementService {
     @Autowired
     private LogElementRepository logElementRepository;
 
-    public LogElement logPush(User userAuth, HttpServletRequest request) {
+    public LogElement logPush(UserAuth userAuth, HttpServletRequest request) {
         return logElementRepository.save(
                 LogElement.builder().
-                        userEmail(userAuth.getEmail()).
+                        userEmail(userAuth.getUsername()).
                         url(String.valueOf(request.getRequestURL())).
                         method(request.getMethod()).
                         dtEvent(LocalDateTime.now()).

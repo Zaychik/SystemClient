@@ -1,5 +1,6 @@
 package com.zaychik.learning.system_user_rest.config;
 
+import com.zaychik.learning.system_user_rest.entity.auth.UserAuth;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +26,8 @@ public class ApplicationConfiguration {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return repository.findByEmail(username)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                return new UserAuth(repository.findByEmail(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found")));
             }
         };
     }

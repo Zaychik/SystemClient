@@ -30,11 +30,6 @@ public class UserService {
         return UserDtoUserMapper.INSTANCE.mapToUserDto(userRepository.findById(id).get());
     }
 
-    @CachePut("users_cache")
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
     @CacheEvict("users_cache")
     public void delete(int id) {
         CheckUserExistById(id);
@@ -42,7 +37,7 @@ public class UserService {
     }
 
     public User create(User user) {
-        return saveUser(user);
+        return userRepository.save(user);
     }
 
     public User update(int id, UserDto user) {
@@ -51,11 +46,11 @@ public class UserService {
         User userNew = UserDtoUserMapper.INSTANCE.mapToUser(user);
         userNew.setPassword(userOld.getPassword());
         userNew.setId(userOld.getId());
-        return saveUser(userNew);
+        return userRepository.save(userNew);
     }
 
-    private void CheckUserExistById(Integer user) {
-        if (!userRepository.existsById(user)) {
+    private void CheckUserExistById(Integer userID) {
+        if (!userRepository.existsById(userID)) {
             throw new IllegalArgumentException("Пользователя с таким номером не существует");
         }
     }

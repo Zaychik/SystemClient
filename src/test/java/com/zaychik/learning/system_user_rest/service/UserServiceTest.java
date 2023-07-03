@@ -30,10 +30,6 @@ class UserServiceTest {
     @InjectMocks
     private UserService service;
     @Test
-    void update() {
-    }
-
-    @Test
     void get() {
         final User user = User.builder()
                 .id(1)

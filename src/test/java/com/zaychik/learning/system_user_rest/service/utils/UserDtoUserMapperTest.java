@@ -1,8 +1,8 @@
 package com.zaychik.learning.system_user_rest.service.utils;
 
-import com.zaychik.learning.system_user_rest.entity.Role;
-import com.zaychik.learning.system_user_rest.entity.User;
-import com.zaychik.learning.system_user_rest.entity.UserDto;
+import com.zaychik.learning.system_user_rest.model.Role;
+import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.model.UserDto;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

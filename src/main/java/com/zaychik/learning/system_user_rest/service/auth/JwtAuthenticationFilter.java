@@ -1,4 +1,4 @@
-package com.zaychik.learning.system_user_rest.config;
+package com.zaychik.learning.system_user_rest.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;

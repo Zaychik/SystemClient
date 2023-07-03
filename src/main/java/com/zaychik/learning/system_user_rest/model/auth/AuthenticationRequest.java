@@ -1,4 +1,4 @@
-package com.zaychik.learning.system_user_rest.auth;
+package com.zaychik.learning.system_user_rest.model.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

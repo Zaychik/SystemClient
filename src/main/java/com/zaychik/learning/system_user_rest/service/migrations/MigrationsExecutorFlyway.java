@@ -1,4 +1,4 @@
-package com.zaychik.learning.system_user_rest.dbmigrations;
+package com.zaychik.learning.system_user_rest.service.migrations;
 
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;

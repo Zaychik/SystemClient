@@ -1,10 +1,10 @@
 package com.zaychik.learning.system_user_rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zaychik.learning.system_user_rest.entity.LogElement;
-import com.zaychik.learning.system_user_rest.entity.User;
-import com.zaychik.learning.system_user_rest.entity.UserDto;
-import com.zaychik.learning.system_user_rest.entity.auth.UserAuth;
+import com.zaychik.learning.system_user_rest.model.LogElement;
+import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.model.UserDto;
+import com.zaychik.learning.system_user_rest.model.auth.UserAuth;
 import com.zaychik.learning.system_user_rest.service.LogElementService;
 import com.zaychik.learning.system_user_rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

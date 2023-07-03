@@ -1,12 +1,11 @@
 package com.zaychik.learning.system_user_rest.service;
 
-import com.zaychik.learning.system_user_rest.entity.User;
-import com.zaychik.learning.system_user_rest.entity.UserDto;
+import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.model.UserDto;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import com.zaychik.learning.system_user_rest.service.utils.UserDtoUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 

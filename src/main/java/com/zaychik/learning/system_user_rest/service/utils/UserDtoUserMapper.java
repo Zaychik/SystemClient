@@ -1,7 +1,7 @@
 package com.zaychik.learning.system_user_rest.service.utils;
 
-import com.zaychik.learning.system_user_rest.entity.User;
-import com.zaychik.learning.system_user_rest.entity.UserDto;
+import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.model.UserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

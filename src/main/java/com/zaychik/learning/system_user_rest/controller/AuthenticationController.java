@@ -1,5 +1,9 @@
-package com.zaychik.learning.system_user_rest.auth;
+package com.zaychik.learning.system_user_rest.controller;
 
+import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
+import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
+import com.zaychik.learning.system_user_rest.service.auth.AuthenticationService;
+import com.zaychik.learning.system_user_rest.model.auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

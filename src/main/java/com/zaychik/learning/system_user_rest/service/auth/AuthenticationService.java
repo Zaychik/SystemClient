@@ -1,9 +1,11 @@
-package com.zaychik.learning.system_user_rest.auth;
+package com.zaychik.learning.system_user_rest.service.auth;
 
-import com.zaychik.learning.system_user_rest.config.JwtService;
-import com.zaychik.learning.system_user_rest.entity.Role;
-import com.zaychik.learning.system_user_rest.entity.User;
-import com.zaychik.learning.system_user_rest.entity.auth.UserAuth;
+import com.zaychik.learning.system_user_rest.model.auth.RegisterRequest;
+import com.zaychik.learning.system_user_rest.model.Role;
+import com.zaychik.learning.system_user_rest.model.User;
+import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
+import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
+import com.zaychik.learning.system_user_rest.model.auth.UserAuth;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

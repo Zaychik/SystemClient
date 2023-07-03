@@ -1,5 +1,6 @@
 package com.zaychik.learning.system_user_rest.config;
 
+import com.zaychik.learning.system_user_rest.service.auth.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

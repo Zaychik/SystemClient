@@ -1,6 +1,6 @@
 package com.zaychik.learning.system_user_rest.config;
 
-import com.zaychik.learning.system_user_rest.entity.auth.UserAuth;
+import com.zaychik.learning.system_user_rest.model.auth.UserAuth;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

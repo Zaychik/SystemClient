@@ -1,6 +1,6 @@
-package com.zaychik.learning.system_user_rest.entity.auth;
+package com.zaychik.learning.system_user_rest.model.auth;
 
-import com.zaychik.learning.system_user_rest.entity.User;
+import com.zaychik.learning.system_user_rest.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

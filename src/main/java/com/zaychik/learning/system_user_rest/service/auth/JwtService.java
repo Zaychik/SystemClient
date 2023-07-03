@@ -1,4 +1,4 @@
-package com.zaychik.learning.system_user_rest.config;
+package com.zaychik.learning.system_user_rest.service.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

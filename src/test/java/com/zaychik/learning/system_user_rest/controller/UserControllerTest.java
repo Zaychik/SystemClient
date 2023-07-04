@@ -1,6 +1,7 @@
 package com.zaychik.learning.system_user_rest.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
@@ -26,15 +27,8 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper mapper;
 
-    @Test
-    @DisplayName("Получив токен админа, получить список всех пользователей через get ./users ")
-    void read_GetAllUsersWithAdminToken_Success() throws Exception {
-        AuthenticationRequest user = AuthenticationRequest.builder()
-                .email("admin@gmail.com")
-                .password("1234")
-                .build();
-
-        MvcResult  result = mvc.perform(MockMvcRequestBuilders
+    private AuthenticationResponce performAuthentication(AuthenticationRequest user) throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/auth/authentication")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -42,21 +36,25 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-
         Gson gson = new Gson();
         AuthenticationResponce response = gson.fromJson(result.getResponse().getContentAsString(), AuthenticationResponce.class);
+        return  response;
+    }
+    @Test
+    @DisplayName("Получив токен админа, получить список всех пользователей через get ./users ")
+    void read_GetAllUsersWithAdminToken_Success() throws Exception {
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("admin@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/users")
                         .header("authorization", "Bearer " + response.getToken())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(user)))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-
-
-
     }
 }

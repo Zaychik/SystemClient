@@ -40,6 +40,21 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
+		<!-- Для развертывания контейнера -->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>1.18.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>1.18.3</version>
+			<scope>test</scope>
+		</dependency>
+
+
 		<!-- для аутентификации и регистрации -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -121,6 +136,12 @@
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-processor</artifactId>
 			<version>1.5.5.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zaychik.learning</groupId>
+			<artifactId>system-user-rest</artifactId>
+			<version>0.0.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

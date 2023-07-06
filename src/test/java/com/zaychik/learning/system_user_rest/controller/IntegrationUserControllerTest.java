@@ -1,6 +1,5 @@
 package com.zaychik.learning.system_user_rest.controller;
 
-
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
 import org.junit.jupiter.api.DisplayName;
@@ -11,15 +10,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTest extends AbstractUserTest {
+class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
+
     @Autowired
     private MockMvc mvc;
+
 
     @Test
     @DisplayName("Получив токен админа, получить список всех пользователей через get ./users ")

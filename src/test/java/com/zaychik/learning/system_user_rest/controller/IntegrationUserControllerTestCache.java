@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTestCach extends AbstractUserTest {
+public class IntegrationUserControllerTestCache extends AbstractIntegrationUserTest {
     @Autowired
     private MockMvc mvc;
     @SpyBean

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
+import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @ContextConfiguration(initializers = {AbstractIntegrationUserTest.Initializer.class})
 public abstract class AbstractIntegrationUserTest {
+    protected static final String VERSION = "3.7.13";
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -36,6 +38,13 @@ public abstract class AbstractIntegrationUserTest {
             .withDatabaseName("demoDB")
             .withUsername("usr")
             .withPassword("pwd");
+
+    @Container
+    private static final ArangoContainer container = new ArangoContainer(VERSION)
+            .withPassword("pwd")
+            .withFixedPort(8528);
+
+
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {

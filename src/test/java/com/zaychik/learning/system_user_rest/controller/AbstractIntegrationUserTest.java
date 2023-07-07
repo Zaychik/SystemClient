@@ -37,7 +37,7 @@ public abstract class AbstractIntegrationUserTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private ObjectMapper mapper;
+    protected ObjectMapper mapper;
 
     @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:13")

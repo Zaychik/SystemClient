@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +31,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService service;
     @Test
-    void get() {
+    void get_whenExistUser_thereIsNoException() {
         final User user = User.builder()
                 .id(1)
                 .email("alex@gmail.com")
@@ -47,10 +48,36 @@ class UserServiceTest {
                 .name("Alex")
                 .role(Role.USER)
                 .build();
+        when(userRepository.existsById(ID)).thenReturn(true);
         when(userRepository.findById(ID)).thenReturn(Optional.ofNullable(user));
         UserDto actualuser = service.get(ID);
         Mockito.verify(userRepository, Mockito.times(1)).findById(ID);
         Assertions.assertEquals(userDto, actualuser);
+    }
+
+    @Test
+    void get_whenNoExistUser_thereIsException() {
+        final User user = User.builder()
+                .id(1)
+                .email("alex@gmail.com")
+                .phone("8999777888123")
+                .name("Alex")
+                .password("qwert")
+                .role(Role.USER)
+                .build();
+
+        final UserDto userDto = UserDto.builder()
+                .id(1)
+                .email("alex@gmail.com")
+                .phone("8999777888123")
+                .name("Alex")
+                .role(Role.USER)
+                .build();
+        when(userRepository.existsById(ID)).thenReturn(false);
+        ResponseStatusException thrown = Assertions.assertThrows(ResponseStatusException.class, () -> {
+            service.get(ID);
+        });
+        Assertions.assertEquals("404 NOT_FOUND \"User not found\"", thrown.getMessage());
     }
 
     @Test
@@ -122,15 +149,16 @@ class UserServiceTest {
     }
 
     @Test
-    void delete_whenNoExistUser_thenThrowException_IllegalArgumentException() {
+    void delete_whenNoExistUser_thenThrowException_ResponseStatusException() {
         when(userRepository.existsById(ID)).thenReturn(false);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        ResponseStatusException thrown = Assertions.assertThrows(ResponseStatusException.class, () -> {
             service.delete(ID);
         });
+        Assertions.assertEquals("404 NOT_FOUND \"User not found\"", thrown.getMessage());
     }
 
     @Test
-    void update_whenNoExistUser_thenThrowException_IllegalArgumentException() {
+    void update_whenNoExistUser_thenThrowException_ResponseStatusException() {
         when(userRepository.existsById(ID)).thenReturn(false);
         UserDto userDtoUser = UserDto.builder()
                 .id(1)
@@ -139,9 +167,10 @@ class UserServiceTest {
                 .name("Alex")
                 .role(Role.USER)
                 .build();
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        ResponseStatusException thrown = Assertions.assertThrows(ResponseStatusException.class, () -> {
             service.update(ID, userDtoUser);
         });
+        Assertions.assertEquals("404 NOT_FOUND \"User not found\"", thrown.getMessage());
     }
 
     @Test

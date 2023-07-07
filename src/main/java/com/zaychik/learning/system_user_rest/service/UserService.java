@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,11 +28,8 @@ public class UserService {
 
     @Cacheable(value = "users_cache")
     public UserDto get(int id) {
-        Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-        }
-        return UserDtoUserMapper.INSTANCE.mapToUserDto(user.get());
+        CheckUserExistById(id);
+        return UserDtoUserMapper.INSTANCE.mapToUserDto(userRepository.findById(id).get());
     }
 
     @CacheEvict("users_cache")
@@ -46,18 +42,24 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User update(int id, UserDto user) {
+    public User update(int id, UserDto user)  {
         CheckUserExistById(id);
         User userOld = userRepository.findById(id).get();
         User userNew = UserDtoUserMapper.INSTANCE.mapToUser(user);
         userNew.setPassword(userOld.getPassword());
         userNew.setId(userOld.getId());
-        return userRepository.save(userNew);
+        User saveUser = null;
+        try {
+            saveUser = userRepository.save(userNew);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return saveUser;
     }
 
     private void CheckUserExistById(Integer userID) {
         if (!userRepository.existsById(userID)) {
-            throw new IllegalArgumentException("Пользователя с таким номером не существует");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
     }
 }

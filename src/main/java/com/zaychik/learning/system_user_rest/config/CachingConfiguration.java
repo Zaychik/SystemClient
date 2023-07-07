@@ -12,23 +12,11 @@ import java.time.Duration;
 @Configuration
 @EnableCaching
 public class CachingConfiguration {
-
-    @Value("${jedis.host}")
-    private String host;
-    @Value("${jedis.port}")
-    private int port;
     @Value("${cache.name}")
     private String cacheName;
     @Value("${cache.duration.sec}")
     private int cacheDuration;
 
-    @Bean
-    JedisConnectionFactory jedisConnectionFactory() {
-        JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
-        jedisConFactory.setHostName(host);
-        jedisConFactory.setPort(port);
-        return jedisConFactory;
-    }
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return (builder) -> builder

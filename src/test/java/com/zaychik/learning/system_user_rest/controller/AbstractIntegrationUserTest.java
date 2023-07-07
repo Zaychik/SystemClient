@@ -2,6 +2,7 @@ package com.zaychik.learning.system_user_rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.redis.testcontainers.RedisContainer;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
 import io.testcontainers.arangodb.containers.ArangoContainer;
@@ -13,12 +14,15 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,7 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @ContextConfiguration(initializers = {AbstractIntegrationUserTest.Initializer.class})
 public abstract class AbstractIntegrationUserTest {
-    protected static final String VERSION = "3.7.13";
+    private static final String VERSION = "3.7.13";
+    private static final int arangodbPort = 8529;
+    private static final int redisPort = 6379;
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -40,12 +46,19 @@ public abstract class AbstractIntegrationUserTest {
             .withPassword("pwd");
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer(VERSION)
-            .withPassword("pwd")
-            .withFixedPort(8528);
+    private static final ArangoContainer ARANGO_CONTAINER = new ArangoContainer(VERSION)
+            .withPassword("pwd");
+    @Container
+    private static final RedisContainer REDIS_CONTAINER =
+            new RedisContainer(DockerImageName.parse("redis:5.0.3-alpine"));
 
+    @DynamicPropertySource
+    private static void registerRedisProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
+        registry.add("spring.redis.port", () -> REDIS_CONTAINER.getMappedPort(redisPort).toString());
+        registry.add("arangodb.port", () -> ARANGO_CONTAINER.getMappedPort(arangodbPort).toString());
 
-
+    }
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(

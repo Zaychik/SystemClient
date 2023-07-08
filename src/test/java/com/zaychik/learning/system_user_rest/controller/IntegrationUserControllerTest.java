@@ -19,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
 
     @Autowired
@@ -193,7 +191,7 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
 
         UserDto userNewDtoUser = UserDto.builder()
                 .id(1)
-                .email("user2@gmail.com")
+                .email("admin@gmail.com")
                 .phone("8111222333")
                 .name("Alexander")
                 .role(Role.USER)
@@ -270,8 +268,8 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
     }
 
     @Test
-    @DisplayName("Получив токен админа, не удачно удалить 3-ого пользователя")
-    void delete_DoWithAdminDeleteExistUser_Succes() throws Exception {
+    @DisplayName("Получив токен админа, удачно удалить 3-ого пользователя из")
+    void delete_DoWithAdminDeleteExistUser_Success() throws Exception {
         AuthenticationRequest user = AuthenticationRequest.builder()
                 .email("admin@gmail.com")
                 .password("1234")
@@ -292,6 +290,5 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
-
 
 }

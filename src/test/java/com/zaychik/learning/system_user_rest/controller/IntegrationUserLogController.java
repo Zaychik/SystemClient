@@ -1,30 +1,34 @@
 package com.zaychik.learning.system_user_rest.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.gson.Gson;
+import com.zaychik.learning.system_user_rest.model.LogElement;
+import com.zaychik.learning.system_user_rest.model.Role;
+import com.zaychik.learning.system_user_rest.model.UserDto;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
-import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-public class IntegrationUserControllerTestCache extends AbstractIntegrationUserTest {
+
+public class IntegrationUserLogController extends AbstractIntegrationUserTest{
     @Autowired
     private MockMvc mvc;
-    @SpyBean
-    UserRepository userRepository;
-
     @Test
-    @DisplayName("Получив токен админа, получить пользователя - сходить в БД один раз, а запросить два раза")
-    void read_GetOneUserWithAdminTokenTwice_OnceBDSuccess() throws Exception {
+    @DisplayName("Получив токен админа, получить список всех пользователей ")
+    void readLog_GetAllLogWithAdminToken_Success() throws Exception {
         AuthenticationRequest user = AuthenticationRequest.builder()
                 .email("admin@gmail.com")
                 .password("1234")
@@ -36,51 +40,63 @@ public class IntegrationUserControllerTestCache extends AbstractIntegrationUserT
                         .header("authorization", "Bearer " + response.getToken())
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
+                .andExpect(status().isOk());
+
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/users/2")
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        UserDto userDtoUser = UserDto.builder()
+                .email("admin@gmail.com")
+                .build();
+
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/users/log")
+                        .header("authorization", "Bearer " + response.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userDtoUser))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
+        Gson gson = new Gson();
+
+        List<LogElement> logElementList = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<LogElement>>(){});
+        assertTrue(logElementList.size() >= 2 );
+    }
+
+    @Test
+    @DisplayName("Получив токен не админа, получить список всех пользователей ")
+    void readLog_GetAllLogWithNoAdminToken_Error() throws Exception {
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("user@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        UserDto userDtoUser = UserDto.builder()
+                .email("admin@gmail.com")
+                .build();
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/users/1")
                         .header("authorization", "Bearer " + response.getToken())
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-        Mockito.verify(userRepository, Mockito.times(1)).findById(1);
-    }
-
-
-    @Test
-    @DisplayName("Получив токен админа, удачно удалить 3-ого пользователя из")
-    void delete_DoWithAdminDeleteExistUserAndCache_Success() throws Exception {
-        AuthenticationRequest user = AuthenticationRequest.builder()
-                .email("admin@gmail.com")
-                .password("1234")
-                .build();
-        AuthenticationResponce response = performAuthentication(user);
-
-        mvc.perform(MockMvcRequestBuilders
-                        .get("/users/3")
-                        .header("authorization", "Bearer " + response.getToken())
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk());
 
         mvc.perform(MockMvcRequestBuilders
-                        .delete("/users/3")
+                        .post("/users/log")
                         .header("authorization", "Bearer " + response.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userDtoUser))
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk());
-
-        mvc.perform(MockMvcRequestBuilders
-                        .get("/users/3")
-                        .header("authorization", "Bearer " + response.getToken())
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isForbidden());
     }
-
 
 }

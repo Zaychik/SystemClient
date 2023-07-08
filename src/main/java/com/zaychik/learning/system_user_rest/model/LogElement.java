@@ -24,5 +24,6 @@ public class LogElement {
     private String userEmail;
     private String url;
     private String method;
+
     private LocalDateTime dtEvent;
 }

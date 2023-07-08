@@ -58,12 +58,4 @@ public class UserController {
         logElementService.logPush(userAuth, request);
         userService.delete(id);
     }
-
-    @PostMapping("/log")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public List<LogElement> readLog(@RequestBody UserDto user) {
-        return logElementService.readAllbyUserEmail(user.getEmail());
-    }
-
-
 }

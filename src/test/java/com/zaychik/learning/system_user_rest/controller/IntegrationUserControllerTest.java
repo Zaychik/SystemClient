@@ -5,7 +5,6 @@ import com.zaychik.learning.system_user_rest.model.Role;
 import com.zaychik.learning.system_user_rest.model.UserDto;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -151,7 +151,7 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
         Gson gson = new Gson();
         UserDto userDtoUser = gson.fromJson(result.getResponse().getContentAsString(), UserDto.class);
 
-        Assertions.assertEquals(userDtoUser, userNewDtoUser);
+        assertEquals(userDtoUser, userNewDtoUser);
     }
 
     @Test
@@ -181,9 +181,37 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
                 .andExpect(status().isForbidden());
     }
 
+
     @Test
-    @DisplayName("Получив токен админа, не удачно изменить 3-ого пользователя")
-    void update_DoWithAdminTokeNoExistUser_Error() throws Exception {
+    @DisplayName("Получив токен админа, не удачно изменить у 1-ого пользователя на существующий email ")
+    void update_DoWithAdminTokenExistUserEmailYetExist_Error() throws Exception {
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("admin@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        UserDto userNewDtoUser = UserDto.builder()
+                .id(1)
+                .email("user2@gmail.com")
+                .phone("8111222333")
+                .name("Alexander")
+                .role(Role.USER)
+                .build();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/users/1")
+                        .header("authorization", "Bearer " + response.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userNewDtoUser))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException().getMessage().contains("users_contraint_email")));
+    }
+    @Test
+    @DisplayName("Получив токен админа, не удачно изменить не существующего пользователя")
+    void update_DoWithAdminNoExistUser_Error() throws Exception {
         AuthenticationRequest user = AuthenticationRequest.builder()
                 .email("admin@gmail.com")
                 .password("1234")
@@ -207,4 +235,63 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+    @Test
+    @DisplayName("Получив токен админа, не удачно удалить не существующего пользователя")
+    void delete_DoWithAdminNoExistUser_Error() throws Exception {
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("admin@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/users/5")
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Получив токен не админа, не удачно удалить 3-ого пользователя")
+    void delete_DoWithNoAdminDeleteExistUser_Error() throws Exception {
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("user@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/users/5")
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Получив токен админа, не удачно удалить 3-ого пользователя")
+    void delete_DoWithAdminDeleteExistUser_Succes() throws Exception {
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("admin@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/users/3")
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/users/3")
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+
 }

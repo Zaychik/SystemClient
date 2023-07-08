@@ -38,10 +38,6 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User create(User user) {
-        return userRepository.save(user);
-    }
-
     public User update(int id, UserDto user)  {
         CheckUserExistById(id);
         User userOld = userRepository.findById(id).get();

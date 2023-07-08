@@ -124,23 +124,6 @@ class UserServiceTest {
         Assertions.assertEquals(expectedUserList, service.getAll());
         Mockito.verify(userRepository, Mockito.times(1)).findAll();
     }
-
-    @Test
-    void create() {
-        final User user = User.builder()
-                .id(1)
-                .email("alex@gmail.com")
-                .phone("8999777888123")
-                .name("Alex")
-                .password("qwert")
-                .role(Role.USER)
-                .build();
-        Mockito.doReturn(user).when(userRepository).save(user);
-        Assertions.assertEquals(user, service.create(user));
-        Mockito.verify(userRepository, Mockito.times(1)).save(user);
-    }
-
-
     @Test
     void delete_whenExistUser_thenThereIsNoException() {
         when(userRepository.existsById(ID)).thenReturn(true);

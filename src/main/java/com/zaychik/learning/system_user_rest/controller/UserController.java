@@ -24,17 +24,6 @@ public class UserController {
     private LogElementService logElementService;
     @Autowired
     ObjectMapper objectMapper;
-
-    @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public User create(@AuthenticationPrincipal UserAuth userAuth,
-                       @RequestBody User user,
-                       HttpServletRequest request) {
-        logElementService.logPush(userAuth, request);
-        return userService.create(user);
-    }
-
-
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public List<UserDto> read(@AuthenticationPrincipal UserAuth userAuth,

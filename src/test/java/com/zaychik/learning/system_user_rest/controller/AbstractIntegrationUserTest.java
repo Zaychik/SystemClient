@@ -35,15 +35,9 @@ public abstract class AbstractIntegrationUserTest {
     private static final int arangodbPort = 8529;
     private static final int redisPort = 6379;
     @Autowired
-    private MockMvc mvc;
+    protected MockMvc mvc;
     @Autowired
     protected ObjectMapper mapper;
-
-    @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:13")
-            .withDatabaseName("demoDB")
-            .withUsername("usr")
-            .withPassword("pwd");
 
     @Container
     private static final ArangoContainer ARANGO_CONTAINER = new ArangoContainer(VERSION)
@@ -52,12 +46,18 @@ public abstract class AbstractIntegrationUserTest {
     private static final RedisContainer REDIS_CONTAINER =
             new RedisContainer(DockerImageName.parse("redis:5.0.3-alpine"));
 
+
+    @Container
+    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:13")
+            .withDatabaseName("demoDB")
+            .withUsername("usr")
+            .withPassword("pwd");
+
     @DynamicPropertySource
     private static void registerRedisProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
         registry.add("spring.redis.port", () -> REDIS_CONTAINER.getMappedPort(redisPort).toString());
         registry.add("arangodb.port", () -> ARANGO_CONTAINER.getMappedPort(arangodbPort).toString());
-
     }
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {

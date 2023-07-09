@@ -17,19 +17,14 @@ public class LogElementService {
 
     public LogElement logPush(UserAuth userAuth, HttpServletRequest request) {
         return logElementRepository.save(
-                LogElement.builder().
-                        userEmail(userAuth.getUsername()).
-                        url(String.valueOf(request.getRequestURL())).
-                        method(request.getMethod()).
-                        dtEvent(LocalDateTime.now()).
-                        build()
+                LogElement.builder()
+                        .userEmail(userAuth.getUsername())
+                        .url(String.valueOf(request.getRequestURL()))
+                        .method(request.getMethod())
+                        .dtEvent(LocalDateTime.now())
+                        .build()
         );
     }
-
-    public List<LogElement> readAll() {
-        return (List<LogElement>) logElementRepository.findAll();
-    }
-
     public List<LogElement> readAllbyUserEmail(String email) {
         return logElementRepository.findAllByUserEmail(email);
     }

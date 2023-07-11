@@ -1,8 +1,6 @@
 package com.zaychik.learning.system_user_rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zaychik.learning.system_user_rest.model.LogElement;
-import com.zaychik.learning.system_user_rest.model.User;
 import com.zaychik.learning.system_user_rest.model.UserDto;
 import com.zaychik.learning.system_user_rest.model.auth.UserAuth;
 import com.zaychik.learning.system_user_rest.service.LogElementService;

@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext(classMode = BEFORE_CLASS)
-public class IntegrationUserLogController extends AbstractIntegrationUserTest{
+public class IntegrationUserLogControllerTest extends AbstractIntegrationUserTest{
 
     @Test
     @DisplayName("Получив токен админа, получить список всех пользователей ")

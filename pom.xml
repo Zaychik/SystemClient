@@ -148,12 +148,7 @@
 			<artifactId>mapstruct-processor</artifactId>
 			<version>1.5.5.Final</version>
 		</dependency>
-		<dependency>
-			<groupId>com.zaychik.learning</groupId>
-			<artifactId>system-user-rest</artifactId>
-			<version>0.0.1</version>
-			<scope>test</scope>
-		</dependency>
+
 	</dependencies>
 
 	<build>

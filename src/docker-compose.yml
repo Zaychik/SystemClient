@@ -1,0 +1,34 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:13
+    build:
+      context: services/postgres
+      dockerfile: Dockerfile.development
+    ports:
+      - "5430:5432"
+    environment:
+      - POSTGRES_USER=usr
+      - POSTGRES_DB=demoDB
+      - POSTGRES_PASSWORD=pwd
+
+
+  arangodb:
+    image: arangodb:latest
+    network_mode: bridge
+    build:
+      context: services/arangodb
+      dockerfile: Dockerfile.development
+    environment:
+      ARANGO_ROOT_PASSWORD: pwd
+    ports:
+      - 8528:8529
+
+  redis:
+    image: redis
+    network_mode: bridge
+    build:
+      context: services/redis
+      dockerfile: Dockerfile.development
+    ports:
+      - '8001:6379'

@@ -2,9 +2,6 @@ version: '3.9'
 services:
   postgres:
     image: postgres:13
-    build:
-      context: services/postgres
-      dockerfile: Dockerfile.development
     ports:
       - "5430:5432"
     environment:
@@ -13,22 +10,33 @@ services:
       - POSTGRES_PASSWORD=pwd
 
 
-  arangodb:
+  arango:
     image: arangodb:latest
-    network_mode: bridge
-    build:
-      context: services/arangodb
-      dockerfile: Dockerfile.development
     environment:
       ARANGO_ROOT_PASSWORD: pwd
     ports:
-      - 8528:8529
+      - "8528:8529"
 
   redis:
     image: redis
-    network_mode: bridge
-    build:
-      context: services/redis
-      dockerfile: Dockerfile.development
     ports:
-      - '8001:6379'
+      - "8001:6379"
+
+  app:
+    image: 'zaychik/system-user-rest'
+    environment:
+      - PORT=8888
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/demoDB
+      - SPRING_REDIS_HOST=redis
+      - ARANGODB_HOST=arango
+    ports:
+      - "8888:8888"
+    depends_on:
+      - postgres
+      - arango
+      - redis
+    links:
+      - redis
+      - arango
+      - postgres
+

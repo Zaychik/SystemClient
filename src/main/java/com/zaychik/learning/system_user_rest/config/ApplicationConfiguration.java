@@ -20,8 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
-    @Autowired
-    MyUserDetailsService userDetailsService;
+
+    private final MyUserDetailsService userDetailsService;
 
     @Bean
     public AuthenticationProvider authenticationProvider(){

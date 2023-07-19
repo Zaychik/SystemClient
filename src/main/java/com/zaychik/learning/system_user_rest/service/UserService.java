@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 /**
  * Сервис - класс, сервисного слоя класса {@link User}
  */

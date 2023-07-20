@@ -1,26 +1,27 @@
 package com.zaychik.learning.system_user_rest.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Data;
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 
 import java.time.Duration;
 
 @Configuration
+@ConfigurationProperties(prefix = "cache")
 @EnableCaching
+@Data
 public class CachingConfiguration {
-    @Autowired
-    private Environment environment;
+    private String name;
+    private Long duration;
 
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return (builder) -> builder
-                .withCacheConfiguration(environment.getProperty("cache.name"),
-                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(Long.parseLong(environment.getProperty("cache.duration.sec")))));
+                .withCacheConfiguration(name,
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(duration)));
     }
 }

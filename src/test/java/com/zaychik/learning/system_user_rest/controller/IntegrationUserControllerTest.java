@@ -92,7 +92,7 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
 
 
     @Test
-    @DisplayName("Получив токен не админа, получить пользователя через get ./users ")
+    @DisplayName("Получив токен не админа, не удачно получить пользователя через get ./users ")
     void read_GetNoExistUserWithUserToken_Error() throws Exception {
         AuthenticationRequest user = AuthenticationRequest.builder()
                 .email("user@gmail.com")
@@ -107,6 +107,65 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+    /**/
+
+    @Test
+    @DisplayName("Получив токен админа, получить пользователя по почте через get ./users ")
+    void read_GetOneUserbyEmailWithAdminToken_Success() throws Exception {
+        String email = "user@gmail.com";
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("admin@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/users/email?email=" + email)
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @DisplayName("Получив токен не админа, получить пользователя по почте через get ./users ")
+    void read_GetOneUserbyEmailWithUserToken_Success() throws Exception {
+        String email = "user@gmail.com";
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("user@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/users/email?email=" + email)
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @DisplayName("Получив токен не админа, не удачно получить не сущ. пользователя по почте через get ./users ")
+    void read_GetNoExistUserbyEmailWithUserToken_Error() throws Exception {
+        String email = "user5@gmail.com";
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("user@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/users/email?email=" + email)
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    /**/
 
     @Test
     @DisplayName("Получив токен админа, удачно изменить 1-ого пользователя")
@@ -281,6 +340,131 @@ class IntegrationUserControllerTest extends AbstractIntegrationUserTest {
         mvc.perform(MockMvcRequestBuilders
                         .get("/users/3")
                         .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Получив токен админа, удачно изменить 1-ого пользователя по почте")
+    void update_byEmail_DoWithAdminTokenExistUser_Success() throws Exception {
+        String emailUser = "user@gmail.com";
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("admin@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        UserDto userNewDtoUser = UserDto.builder()
+                .id(1)
+                .email(emailUser)
+                .phone("8111222333")
+                .name("Alexander")
+                .role(Role.USER)
+                .build();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/users/email/?email=" + emailUser)
+                        .header("authorization", "Bearer " + response.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userNewDtoUser))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get("/users/email/?email=" + emailUser)
+                        .header("authorization", "Bearer " + response.getToken())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        Gson gson = new Gson();
+        UserDto userDtoUser = gson.fromJson(result.getResponse().getContentAsString(), UserDto.class);
+
+        assertEquals(userDtoUser, userNewDtoUser);
+    }
+
+    @Test
+    @DisplayName("Получив токен не админа, не удачно изменить 1-ого пользователя по почте")
+    void update_byEmail_DoWithNoAdminTokenExistUser_Error() throws Exception {
+        String emailUser = "user@gmail.com";
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("user@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        UserDto userNewDtoUser = UserDto.builder()
+                .id(1)
+                .email(emailUser)
+                .phone("8111222333")
+                .name("Alexander")
+                .role(Role.USER)
+                .build();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/users/email?email=" + emailUser)
+                        .header("authorization", "Bearer " + response.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userNewDtoUser))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+
+    @Test
+    @DisplayName("Получив токен админа, не удачно изменить у пользователя по почте на существующий email ")
+    void update_byEmail_DoWithAdminTokenExistUserEmailYetExist_Error() throws Exception {
+        String emailUser = "user@gmail.com";
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("admin@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        UserDto userNewDtoUser = UserDto.builder()
+                .id(1)
+                .email("user2@gmail.com")
+                .phone("8111222333")
+                .name("Alexander")
+                .role(Role.USER)
+                .build();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/users/email?email=" + emailUser)
+                        .header("authorization", "Bearer " + response.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userNewDtoUser))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException().getMessage().contains("users_contraint_email")));
+    }
+    @Test
+    @DisplayName("Получив токен админа, не удачно изменить не существующего пользователя")
+    void update_byEmail_DoWithAdminNoExistUser_Error() throws Exception {
+        String emailUser = "user5@gmail.com";
+        AuthenticationRequest user = AuthenticationRequest.builder()
+                .email("admin@gmail.com")
+                .password("1234")
+                .build();
+        AuthenticationResponce response = performAuthentication(user);
+
+        UserDto userNewDtoUser = UserDto.builder()
+                .id(3)
+                .email("user@gmail.com")
+                .phone("8111222333")
+                .name("Alexander")
+                .role(Role.USER)
+                .build();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/users/email?email=" + emailUser)
+                        .header("authorization", "Bearer " + response.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userNewDtoUser))
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound());

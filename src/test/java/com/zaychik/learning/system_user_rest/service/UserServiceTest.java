@@ -155,7 +155,6 @@ class UserServiceTest {
         });
         Assertions.assertEquals("404 NOT_FOUND \"User not found\"", thrown.getMessage());
     }
-
     @Test
     @DisplayName("нет исключений, если пользователь существует в БД и Должен единожды вызывать нужные методы")
     void update_whenExistUser_thenThereIsNoException() {
@@ -182,4 +181,48 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).findById(ID);
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
+
+    @Test
+    @DisplayName("нет исключений, если пользователь существует в БД и Должен единожды вызывать нужные методы")
+    void update_byEmail_whenExistUser_thenThereIsNoException() {
+        String email = "alex@gmail.com";
+        UserDto userDtoUser = UserDto.builder()
+                .id(1)
+                .email(email)
+                .phone("8999777888123")
+                .name("Alex")
+                .role(Role.USER)
+                .build();
+        User user = User.builder()
+                .id(1)
+                .email(email)
+                .phone("8999777888123")
+                .name("Alex")
+                .password("qwert")
+                .role(Role.USER)
+                .build();
+        when(userRepository.findByEmail(email)).thenReturn(Optional.ofNullable(user));
+        Mockito.doReturn(user).when(userRepository).save(user);
+        Assertions.assertEquals(user, service.update(email, userDtoUser));
+        Mockito.verify(userRepository, Mockito.times(1)).findByEmail(email);
+        Mockito.verify(userRepository, Mockito.times(1)).save(user);
+    }
+
+    @Test
+    void update_byEmail_whenNoExistUser_thenThrowException_ResponseStatusException() {
+        String email = "alex@gmail.com";
+        when(userRepository.findByEmail(email)).thenReturn(Optional.ofNullable(null));
+        UserDto userDtoUser = UserDto.builder()
+                .id(1)
+                .email(email)
+                .phone("8999777888123")
+                .name("Alex")
+                .role(Role.USER)
+                .build();
+        ResponseStatusException thrown = Assertions.assertThrows(ResponseStatusException.class, () -> {
+            service.update(email, userDtoUser);
+        });
+        Assertions.assertEquals("404 NOT_FOUND \"User not found\"", thrown.getMessage());
+    }
+
 }

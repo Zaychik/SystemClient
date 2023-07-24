@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +41,17 @@ public class UserService {
     public UserDto get(int id) {
         CheckUserExistById(id);
         return UserDtoUserMapper.INSTANCE.mapToUserDto(userRepository.findById(id).get());
+    }
+
+    /**
+     * Получение одного пользователей по email.
+     * @param email - внутренний идентификатор таблицы
+     * @throws ResponseStatusException с HttpStatus.NOT_FOUND и текстом "User not found" если пользователя нет в БД
+     * @return объект класса {@link UserDto} Значение может быть получено из кэша "users_cache"
+     */
+    @Cacheable(value = "users_cache")
+    public UserDto get(String email) {
+        return UserDtoUserMapper.INSTANCE.mapToUserDto(getUserByEmail(email));
     }
 
     /**
@@ -72,6 +84,27 @@ public class UserService {
         }
         return saveUser;
     }
+
+    /**
+     * Обновление одного пользователей по email.
+     * @param email - почта пользователя
+     * @param user - объект класса {@link UserDto}, содержит новые значения для объекта по номеру ID
+     * Удаляется также информация из кэша "users_cache"
+     */
+    public User update(String email, UserDto user)  {
+        User userOld = getUserByEmail(email);
+        User userNew = UserDtoUserMapper.INSTANCE.mapToUser(user);
+        userNew.setPassword(userOld.getPassword());
+        userNew.setId(userOld.getId());
+        User saveUser = null;
+        try {
+            saveUser = userRepository.save(userNew);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return saveUser;
+    }
+
     /**
      * Проверка на существоание в БД пользотваеля по номеру ID.
      * @param userID - внутренний идентификатор таблицы
@@ -82,4 +115,12 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
     }
+    private User getUserByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        return user.get();
+    }
+
 }

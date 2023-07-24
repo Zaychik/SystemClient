@@ -55,6 +55,21 @@ public class UserController {
     }
 
     /**
+     * Получение конкретного пользователя в системе по email
+     * @param userAuth - объект {@link UserAuth} содержит информацию авторизованного пользователя
+     * @param email - номер(внутренний номер) пользователя, по которому запрашивается информация
+     * @param request - запрос, который приходит сервису
+     * @return объект класса {@link UserDto}
+     */
+    @GetMapping("/email")
+    public UserDto read(@AuthenticationPrincipal UserAuth userAuth,
+                        @RequestParam String email,
+                        HttpServletRequest request) {
+        logElementService.logPush(userAuth, request);
+        return userService.get(email);
+    }
+
+    /**
      * Обновление информации конкретного пользователя в системе по ID
      * @param userAuth - объект {@link UserAuth} содержит информацию авторизованного пользователя
      * @param id - номер(внутренний номер) пользователя, по которому запрашивается информация
@@ -70,6 +85,24 @@ public class UserController {
                        HttpServletRequest request) {
         logElementService.logPush(userAuth, request);
         userService.update(id, user);
+    }
+
+    /**
+     * Обновление информации конкретного пользователя в системе по email
+     * @param userAuth - объект {@link UserAuth} содержит информацию авторизованного пользователя
+     * @param email - номер(внутренний номер) пользователя, по которому запрашивается информация
+     * @param user - объект класса {@link UserDto}, содержит новые значения для объекта по номеру ID
+     * @param request - запрос, который приходит сервису
+     * Доступ только у администратора
+     */
+    @PutMapping("/email")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public void update(@AuthenticationPrincipal UserAuth userAuth,
+                       @RequestParam String email,
+                       @RequestBody UserDto user,
+                       HttpServletRequest request) {
+        logElementService.logPush(userAuth, request);
+        userService.update(email, user);
     }
     /**
      * Удаление конкретного пользователя в системе по ID

@@ -20,12 +20,14 @@ class UserDtoUserMapperTest {
                 .role(Role.USER)
                 .build();
         UserDto userDto = UserDtoUserMapper.INSTANCE.mapToUserDto(user);
-        assertEquals(userDto.getId(), user.getId());
-        assertEquals(userDto.getEmail(), user.getEmail());
-        assertEquals(userDto.getPhone(), user.getPhone());
-        assertEquals(userDto.getName(), user.getName());
-        assertEquals(userDto.getRole(), user.getRole());
 
+        assertAll(
+                () -> assertEquals(userDto.getId(), user.getId()),
+                () -> assertEquals(userDto.getEmail(), user.getEmail()),
+                () -> assertEquals(userDto.getPhone(), user.getPhone()),
+                () -> assertEquals(userDto.getName(), user.getName()),
+                () -> assertEquals(userDto.getRole(), user.getRole())
+        );
     }
 
     @Test
@@ -38,11 +40,13 @@ class UserDtoUserMapperTest {
                 .role(Role.USER)
                 .build();
         User user = UserDtoUserMapper.INSTANCE.mapToUser(userDto);
-        assertEquals(userDto.getId(), user.getId());
-        assertEquals(userDto.getEmail(), user.getEmail());
-        assertEquals(userDto.getPhone(), user.getPhone());
-        assertEquals(userDto.getName(), user.getName());
-        assertEquals(userDto.getRole(), user.getRole());
-        assertNull(user.getPassword());
+        assertAll(
+                () -> assertEquals(userDto.getId(), user.getId()),
+                () -> assertEquals(userDto.getEmail(), user.getEmail()),
+                () -> assertEquals(userDto.getPhone(), user.getPhone()),
+                () -> assertEquals(userDto.getName(), user.getName()),
+                () -> assertEquals(userDto.getRole(), user.getRole()),
+                () -> assertNull(user.getPassword())
+        );
     }
 }

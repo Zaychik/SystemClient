@@ -1,15 +1,14 @@
 package com.zaychik.learning.system_user_rest.service;
 
+import com.zaychik.learning.system_user_rest.controller.exception.NotFoundException;
 import com.zaychik.learning.system_user_rest.model.User;
 import com.zaychik.learning.system_user_rest.model.UserDto;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import com.zaychik.learning.system_user_rest.service.utils.UserDtoUserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +18,9 @@ import java.util.stream.Collectors;
  * Сервис - класс, сервисного слоя класса {@link User}
  */
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    final private UserRepository userRepository;
 
     /**
      * Получение всех пользователей
@@ -39,14 +38,13 @@ public class UserService {
      */
     @Cacheable(value = "users_cache")
     public UserDto get(int id) {
-        CheckUserExistById(id);
-        return UserDtoUserMapper.INSTANCE.mapToUserDto(userRepository.findById(id).get());
+        return UserDtoUserMapper.INSTANCE.mapToUserDto(getUserByID(id));
     }
 
     /**
      * Получение одного пользователей по email.
      * @param email - внутренний идентификатор таблицы
-     * @throws ResponseStatusException с HttpStatus.NOT_FOUND и текстом "User not found" если пользователя нет в БД
+     * @throws NotFoundException  и текстом "User not found" если пользователя нет в БД
      * @return объект класса {@link UserDto} Значение может быть получено из кэша "users_cache"
      */
     @Cacheable(value = "users_cache")
@@ -61,7 +59,6 @@ public class UserService {
      */
     @CacheEvict("users_cache")
     public void delete(int id) {
-        CheckUserExistById(id);
         userRepository.deleteById(id);
     }
     /**
@@ -71,17 +68,11 @@ public class UserService {
      * Удаляется также информация из кэша "users_cache"
      */
     public User update(int id, UserDto user)  {
-        CheckUserExistById(id);
-        User userOld = userRepository.findById(id).get();
+        User userOld = getUserByID(id);
         User userNew = UserDtoUserMapper.INSTANCE.mapToUser(user);
         userNew.setPassword(userOld.getPassword());
         userNew.setId(userOld.getId());
-        User saveUser = null;
-        try {
-            saveUser = userRepository.save(userNew);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        User saveUser = userRepository.save(userNew);
         return saveUser;
     }
 
@@ -96,29 +87,31 @@ public class UserService {
         User userNew = UserDtoUserMapper.INSTANCE.mapToUser(user);
         userNew.setPassword(userOld.getPassword());
         userNew.setId(userOld.getId());
-        User saveUser = null;
-        try {
-            saveUser = userRepository.save(userNew);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        User saveUser = userRepository.save(userNew);
         return saveUser;
     }
 
     /**
      * Проверка на существоание в БД пользотваеля по номеру ID.
      * @param userID - внутренний идентификатор таблицы
-     * @throws ResponseStatusException с HttpStatus.NOT_FOUND и текстом "User not found" если пользователя нет в БД
+     * @throws NotFoundException  и текстом "User not found" если пользователя нет в БД
      */
-    private void CheckUserExistById(Integer userID) {
-        if (!userRepository.existsById(userID)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+    private User getUserByID(Integer userID) {
+        Optional<User> user = userRepository.findById(userID);
+        if (!user.isPresent()) {
+            throw new NotFoundException("User not found");
         }
+        return user.get();
     }
+    /**
+     * Проверка на существоание в БД пользотваеля по номеру email.
+     * @param email - почта пользователя
+     * @throws NotFoundException  и текстом "User not found" если пользователя нет в БД
+     */
     private User getUserByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
-        if (user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        if (!user.isPresent()) {
+            throw new NotFoundException("User not found");
         }
         return user.get();
     }

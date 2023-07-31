@@ -1,12 +1,9 @@
 package com.zaychik.learning.system_user_rest.service;
 
 
-import com.zaychik.learning.system_user_rest.model.User;
-import com.zaychik.learning.system_user_rest.model.UserDto;
 import com.zaychik.learning.system_user_rest.model.auth.UserAuth;
 import com.zaychik.learning.system_user_rest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

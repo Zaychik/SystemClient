@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    final private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     /**
      * Получение всех пользователей
@@ -72,8 +72,7 @@ public class UserService {
         User userNew = UserDtoUserMapper.INSTANCE.mapToUser(user);
         userNew.setPassword(userOld.getPassword());
         userNew.setId(userOld.getId());
-        User saveUser = userRepository.save(userNew);
-        return saveUser;
+        return userRepository.save(userNew);
     }
 
     /**
@@ -87,8 +86,7 @@ public class UserService {
         User userNew = UserDtoUserMapper.INSTANCE.mapToUser(user);
         userNew.setPassword(userOld.getPassword());
         userNew.setId(userOld.getId());
-        User saveUser = userRepository.save(userNew);
-        return saveUser;
+        return userRepository.save(userNew);
     }
 
     /**

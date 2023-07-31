@@ -2,7 +2,6 @@ package com.zaychik.learning.system_user_rest.service.auth;
 
 import com.zaychik.learning.system_user_rest.model.Role;
 import com.zaychik.learning.system_user_rest.model.User;
-import com.zaychik.learning.system_user_rest.model.UserDto;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
 import com.zaychik.learning.system_user_rest.model.auth.RegisterRequest;
@@ -37,7 +36,7 @@ public class AuthenticationService {
      *  - SQL сообщение при ошибке сохранения, например, не прошел проверку целостности в БД
      */
     public AuthenticationResponce register(RegisterRequest request) {
-        CheckPassword(request);
+        checkPassword(request);
         var user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -62,7 +61,7 @@ public class AuthenticationService {
      * @throws ResponseStatusException с HttpStatus.BAD_REQUEST и текстом:
      *  - "Enter a password" если пользователь не ввел пароль
      */
-    private void CheckPassword(RegisterRequest request) {
+    private void checkPassword(RegisterRequest request) {
         String password = request.getPassword();
         if (password == null || password.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Enter a password");

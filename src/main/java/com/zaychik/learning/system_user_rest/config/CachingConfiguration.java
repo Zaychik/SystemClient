@@ -20,7 +20,7 @@ public class CachingConfiguration {
 
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
-        return (builder) -> builder
+        return builder -> builder
                 .withCacheConfiguration(name,
                         RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(duration)));
     }

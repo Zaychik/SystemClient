@@ -2,15 +2,14 @@ package com.zaychik.learning.system_user_rest.controller;
 
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
-import com.zaychik.learning.system_user_rest.service.auth.AuthenticationService;
 import com.zaychik.learning.system_user_rest.model.auth.RegisterRequest;
+import com.zaychik.learning.system_user_rest.service.auth.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Контролер - точка входа для авторизации и регистрации новых клиентов.

@@ -4,6 +4,10 @@ import com.zaychik.learning.system_user_rest.model.auth.AuthenticationRequest;
 import com.zaychik.learning.system_user_rest.model.auth.AuthenticationResponce;
 import com.zaychik.learning.system_user_rest.model.auth.RegisterRequest;
 import com.zaychik.learning.system_user_rest.service.auth.AuthenticationService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +32,13 @@ public class AuthenticationController {
      * Возвращается 200 если пользователь сохранился в БД
      */
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponce> register (@RequestBody RegisterRequest request) {
+    @ApiOperation(value = "Регистрация нового пользователя в системе",
+            notes = "Регистрация нового пользователя в системе и получение токена")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Ошибка обновления, возможно ошибка БД.")
+    })
+    public ResponseEntity<AuthenticationResponce> register (
+            @ApiParam(value = "Информация о пользователе", required = true) @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(service.register(request));
     }
 
@@ -39,7 +49,13 @@ public class AuthenticationController {
      * Возвращается 200 если пользователь авторизовался в БД
      */
     @PostMapping("/authentication")
-    public ResponseEntity<AuthenticationResponce> register (@RequestBody AuthenticationRequest request) {
+    @ApiOperation(value = "Авторизация пользователя в системе",
+            notes = "Авторизация пользователя в системе и получение токена")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Авторизация не произведена")
+    })
+    public ResponseEntity<AuthenticationResponce> register (
+            @ApiParam(value = "Информация о пользователе", required = true) @RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
     }
 }

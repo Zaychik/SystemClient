@@ -22,12 +22,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DirtiesContext(classMode = BEFORE_CLASS)
 public class IntegrationUserLogControllerTest extends AbstractIntegrationUserTest{
+    private static final String EMAIL = "admin@gmail.com";
 
     @Test
     @DisplayName("Получив токен админа, получить список всех пользователей ")
     void readLog_GetAllLogWithAdminToken_Success() throws Exception {
         AuthenticationRequest user = AuthenticationRequest.builder()
-                .email("admin@gmail.com")
+                .email(EMAIL)
                 .password("1234")
                 .build();
         AuthenticationResponce response = performAuthentication(user);
@@ -47,15 +48,10 @@ public class IntegrationUserLogControllerTest extends AbstractIntegrationUserTes
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        UserDto userDtoUser = UserDto.builder()
-                .email("admin@gmail.com")
-                .build();
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post("/users/log")
+                        .post("/users/log?email=" + EMAIL)
                         .header("authorization", "Bearer " + response.getToken())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(userDtoUser))
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())

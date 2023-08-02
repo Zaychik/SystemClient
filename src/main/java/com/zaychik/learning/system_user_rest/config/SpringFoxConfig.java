@@ -18,6 +18,6 @@ public class SpringFoxConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.zaychik.learning.system_user_rest.controller"))
                 .paths(PathSelectors.any())
                 .build()
-                .useDefaultResponseMessages(true);
+                .useDefaultResponseMessages(false);
     }
 }

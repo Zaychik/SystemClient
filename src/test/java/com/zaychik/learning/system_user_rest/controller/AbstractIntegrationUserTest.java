@@ -32,8 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(initializers = {AbstractIntegrationUserTest.Initializer.class})
 public abstract class AbstractIntegrationUserTest {
     private static final String VERSION = "3.7.13";
-    private static final int arangodbPort = 8529;
-    private static final int redisPort = 6379;
+    private static final int ARANGODB_PORT = 8529;
+    private static final int REDIS_PORT = 6379;
     @Autowired
     protected MockMvc mvc;
     @Autowired
@@ -56,8 +56,8 @@ public abstract class AbstractIntegrationUserTest {
     @DynamicPropertySource
     private static void registerRedisProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
-        registry.add("spring.redis.port", () -> REDIS_CONTAINER.getMappedPort(redisPort).toString());
-        registry.add("arangodb.port", () -> ARANGO_CONTAINER.getMappedPort(arangodbPort).toString());
+        registry.add("spring.redis.port", () -> REDIS_CONTAINER.getMappedPort(REDIS_PORT).toString());
+        registry.add("arangodb.port", () -> ARANGO_CONTAINER.getMappedPort(ARANGODB_PORT).toString());
     }
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {

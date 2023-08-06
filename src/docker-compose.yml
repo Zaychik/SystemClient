@@ -22,7 +22,7 @@ services:
     ports:
       - "8001:6379"
   app:
-    image: 'zaychik/system-user-rest'
+    image: 'zaychik/system-user-rest-new'
     environment:
       - PORT=8888
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/demoDB

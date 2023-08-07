@@ -3,6 +3,7 @@ package com.zaychik.learning.system_user_rest.service;
 import com.zaychik.learning.system_user_rest.model.LogElement;
 import com.zaychik.learning.system_user_rest.repository.LogElementRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,13 +19,11 @@ class LogElementServiceTest {
     private LogElementRepository logElementRepository;
     private LogElementService service;
     private static final String USER_EMAIL = "admin@gmail.com";
-    @BeforeEach
-    void setUp() {
-        logElementRepository = mock(LogElementRepository.class);
-        service = new LogElementService(logElementRepository);
-    }
+
     @Test
     void readAllbyUserEmail() {
+        logElementRepository = mock(LogElementRepository.class);
+        service = new LogElementService(logElementRepository);
         List<LogElement> logElementList = new LinkedList<LogElement>();
         LogElement logElement1 = LogElement.builder()
                 .userEmail(USER_EMAIL)
